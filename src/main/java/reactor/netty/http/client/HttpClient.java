@@ -2,7 +2,9 @@ package reactor.netty.http.client;
 
 import reactor.netty.resources.ConnectionProvider;
 import reactor.netty.transport.ClientTransport;
+import reactor.util.annotation.Nullable;
 
+import java.time.Duration;
 import java.util.Objects;
 
 /**
@@ -47,6 +49,32 @@ public abstract class HttpClient extends ClientTransport<HttpClient, HttpClientC
     public static HttpClient create(ConnectionProvider connectionProvider) {
         Objects.requireNonNull(connectionProvider, "connectionProvider");
         return new HttpClientConnect(new HttpConnectionProvider(connectionProvider));
+    }
+
+    /**
+     * Specifies the maximum duration allowed between each network-level read operation while reading a given response
+     * (resolution: ms). In other words, {@link io.netty.handler.timeout.ReadTimeoutHandler} is added to the channel
+     * pipeline after sending the request and is removed when the response is fully received.
+     * If the {@code maxReadOperationInterval} is {@code null}, any previous setting will be removed and no
+     * {@code maxReadOperationInterval} will be applied.
+     * If the {@code maxReadOperationInterval} is less than {@code 1ms}, then {@code 1ms} will be the
+     * {@code maxReadOperationInterval}.
+     * The {@code maxReadOperationInterval} setting on {@link HttpClientRequest} level overrides any
+     * {@code maxReadOperationInterval} setting on {@link HttpClient} level.
+     *
+     * @param maxReadOperationInterval the maximum duration allowed between each network-level read operations
+     *                                 (resolution: ms).
+     * @return a new {@link HttpClient}
+     * @since 0.9.11
+     * @see io.netty.handler.timeout.ReadTimeoutHandler
+     */
+    public final HttpClient responseTimeout(@Nullable Duration maxReadOperationInterval) {
+        if (Objects.equals(maxReadOperationInterval, configuration().responseTimeout)) {
+            return this;
+        }
+        HttpClient dup = duplicate();
+        dup.configuration().responseTimeout = maxReadOperationInterval;
+        return dup;
     }
 
 }
