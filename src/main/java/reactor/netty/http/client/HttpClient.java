@@ -1,6 +1,9 @@
 package reactor.netty.http.client;
 
+import reactor.netty.resources.ConnectionProvider;
 import reactor.netty.transport.ClientTransport;
+
+import java.util.Objects;
 
 /**
  * An HttpClient allows building in a safe immutable way an http client that is
@@ -40,5 +43,10 @@ import reactor.netty.transport.ClientTransport;
  * @author Violeta Georgieva
  */
 public abstract class HttpClient extends ClientTransport<HttpClient, HttpClientConfig> {
+
+    public static HttpClient create(ConnectionProvider connectionProvider) {
+        Objects.requireNonNull(connectionProvider, "connectionProvider");
+        return new HttpClientConnect(new HttpConnectionProvider(connectionProvider));
+    }
 
 }
