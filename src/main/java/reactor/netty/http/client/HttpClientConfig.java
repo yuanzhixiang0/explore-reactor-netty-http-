@@ -15,6 +15,7 @@ import reactor.netty.NettyOutbound;
 import reactor.netty.channel.ChannelMetricsRecorder;
 import reactor.netty.http.Http2SettingsSpec;
 import reactor.netty.http.HttpProtocol;
+import reactor.netty.http.HttpResources;
 import reactor.netty.http.logging.HttpMessageLogFactory;
 import reactor.netty.http.logging.ReactorNettyHttpMessageLogFactory;
 import reactor.netty.resources.ConnectionProvider;
@@ -126,11 +127,17 @@ public final class HttpClientConfig extends ClientTransportConfig<HttpClientConf
 
     static final int h11 = 0b100;
 
+    /**
+     * Provides a global {@link AddressResolverGroup} from {@link HttpResources}
+     * that is shared amongst all HTTP clients. {@link AddressResolverGroup} uses the global
+     * {@link LoopResources} from {@link HttpResources}.
+     *
+     * @return the global {@link AddressResolverGroup}
+     */
     @Override
-    protected AddressResolverGroup<?> defaultAddressResolverGroup() {
-        throw new Error();
+    public AddressResolverGroup<?> defaultAddressResolverGroup() {
+        return HttpResources.get().getOrCreateDefaultResolver();
     }
-
     @Override
     protected LoggingHandler defaultLoggingHandler() {
         throw new Error();

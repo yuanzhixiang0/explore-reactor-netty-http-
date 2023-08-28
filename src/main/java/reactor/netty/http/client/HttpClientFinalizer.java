@@ -47,13 +47,19 @@ final class HttpClientFinalizer extends HttpClientConnect implements HttpClient.
         throw new Error();
     }
 
+    // RequestSender methods
+
     @Override
-    public ResponseReceiver<?> send(Publisher<? extends ByteBuf> body) {
-        throw new Error();
+    public HttpClientFinalizer send(
+            BiFunction<? super HttpClientRequest, ? super NettyOutbound, ? extends Publisher<Void>> sender) {
+        Objects.requireNonNull(sender, "requestBody");
+        HttpClient dup = duplicate();
+        dup.configuration().body = sender;
+        return (HttpClientFinalizer) dup;
     }
 
     @Override
-    public ResponseReceiver<?> send(BiFunction<? super HttpClientRequest, ? super NettyOutbound, ? extends Publisher<Void>> sender) {
+    public ResponseReceiver<?> send(Publisher<? extends ByteBuf> body) {
         throw new Error();
     }
 
@@ -74,7 +80,8 @@ final class HttpClientFinalizer extends HttpClientConnect implements HttpClient.
 
     @Override
     public <V> Flux<V> responseConnection(BiFunction<? super HttpClientResponse, ? super Connection, ? extends Publisher<V>> receiver) {
-        throw new Error();
+        return _connect().flatMapMany(resp -> Flux.from(receiver.apply(resp, resp))
+                .contextWrite(resp.currentContextView()));
     }
 
     @Override
@@ -85,6 +92,10 @@ final class HttpClientFinalizer extends HttpClientConnect implements HttpClient.
     @Override
     public <V> Mono<V> responseSingle(BiFunction<? super HttpClientResponse, ? super ByteBufMono, ? extends Mono<V>> receiver) {
         throw new Error();
+    }
+
+    Mono<HttpClientOperations> _connect() {
+        return (Mono<HttpClientOperations>) connect();
     }
 
     @Override
