@@ -44,18 +44,15 @@ final class HttpConnectionProvider implements ConnectionProvider {
             ConnectionObserver connectionObserver,
             @Nullable Supplier<? extends SocketAddress> remoteAddress,
             @Nullable AddressResolverGroup<?> resolverGroup) {
-//        if (((HttpClientConfig) config)._protocols == HttpClientConfig.h11) {
-//            return http1ConnectionProvider().acquire(config, connectionObserver, remoteAddress, resolverGroup);
-//        }
-//        else if (http1ConnectionProvider == null) {
+        if (((HttpClientConfig) config)._protocols == HttpClientConfig.h11) {
+            return http1ConnectionProvider().acquire(config, connectionObserver, remoteAddress, resolverGroup);
+        } else if (http1ConnectionProvider == null) {
 //            return HttpResources.get().getOrCreateHttp2ConnectionProvider(HTTP2_CONNECTION_PROVIDER_FACTORY)
 //                    .acquire(config, connectionObserver, remoteAddress, resolverGroup);
-//        }
-//        else {
-//            return getOrCreate().acquire(config, connectionObserver, remoteAddress, resolverGroup);
-//        }
-
-        throw new Error();
+            throw new Error();
+        } else {
+            return getOrCreate().acquire(config, connectionObserver, remoteAddress, resolverGroup);
+        }
     }
 
     @Override
@@ -98,8 +95,7 @@ final class HttpConnectionProvider implements ConnectionProvider {
     }
 
     ConnectionProvider http1ConnectionProvider() {
-//        return http1ConnectionProvider != null ? http1ConnectionProvider : HttpResources.get();
-        throw new Error();
+        return http1ConnectionProvider != null ? http1ConnectionProvider : HttpResources.get();
     }
 
     static final Function<ConnectionProvider, ConnectionProvider> HTTP2_CONNECTION_PROVIDER_FACTORY =

@@ -145,7 +145,7 @@ public final class HttpClientConfig extends ClientTransportConfig<HttpClientConf
 
     @Override
     protected LoopResources defaultLoopResources() {
-        throw new Error();
+        return HttpResources.get();
     }
 
     @Override
