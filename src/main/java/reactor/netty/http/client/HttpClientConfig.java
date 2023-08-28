@@ -145,4 +145,13 @@ public final class HttpClientConfig extends ClientTransportConfig<HttpClientConf
     protected ChannelMetricsRecorder defaultMetricsRecorder() {
         throw new Error();
     }
+
+    /**
+     * Returns true if that {@link HttpClient} secured via SSL transport
+     *
+     * @return true if that {@link HttpClient} secured via SSL transport
+     */
+    public boolean isSecure() {
+        return sslProvider != null;
+    }
 }
