@@ -10,6 +10,7 @@ import reactor.netty.Connection;
 import reactor.netty.NettyOutbound;
 
 import java.net.URI;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -28,8 +29,12 @@ final class HttpClientFinalizer extends HttpClientConnect implements HttpClient.
     }
 
     @Override
-    public RequestSender uri(String uri) {
-        throw new Error();
+    public HttpClient.RequestSender uri(String uri) {
+        Objects.requireNonNull(uri, "uri");
+        HttpClient dup = duplicate();
+        dup.configuration().uriStr = uri;
+        dup.configuration().uri = null;
+        return (HttpClientFinalizer) dup;
     }
 
     @Override
