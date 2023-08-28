@@ -86,4 +86,9 @@ final class HttpClientFinalizer extends HttpClientConnect implements HttpClient.
     public <V> Mono<V> responseSingle(BiFunction<? super HttpClientResponse, ? super ByteBufMono, ? extends Mono<V>> receiver) {
         throw new Error();
     }
+
+    @Override
+    protected HttpClient duplicate() {
+        return new HttpClientFinalizer(new HttpClientConfig(config));
+    }
 }
