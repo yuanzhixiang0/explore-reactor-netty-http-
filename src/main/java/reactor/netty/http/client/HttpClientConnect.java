@@ -467,21 +467,21 @@ class HttpClientConnect extends HttpClient {
         volatile HttpHeaders previousRequestHeaders;
 
         HttpClientHandler(HttpClientConfig configuration) {
-//            this.method = configuration.method;
-//            this.compress = configuration.acceptGzip;
-//            this.followRedirectPredicate = configuration.followRedirectPredicate;
-//            this.redirectRequestBiConsumer = configuration.redirectRequestBiConsumer;
-//            this.redirectRequestConsumer = configuration.redirectRequestConsumer;
-//            this.decoder = configuration.decoder;
-//            this.proxyProvider = configuration.proxyProvider();
-//            this.responseTimeout = configuration.responseTimeout;
-//            this.defaultHeaders = configuration.headers;
-//
-//            String baseUrl = configuration.baseUrl;
-//
-//            this.uriEndpointFactory =
-//                    new UriEndpointFactory(configuration.remoteAddress(), configuration.isSecure(), URI_ADDRESS_MAPPER);
-//
+            this.method = configuration.method;
+            this.compress = configuration.acceptGzip;
+            this.followRedirectPredicate = configuration.followRedirectPredicate;
+            this.redirectRequestBiConsumer = configuration.redirectRequestBiConsumer;
+            this.redirectRequestConsumer = configuration.redirectRequestConsumer;
+            this.decoder = configuration.decoder;
+            this.proxyProvider = configuration.proxyProvider();
+            this.responseTimeout = configuration.responseTimeout;
+            this.defaultHeaders = configuration.headers;
+
+            String baseUrl = configuration.baseUrl;
+
+            this.uriEndpointFactory =
+                    new UriEndpointFactory(configuration.remoteAddress(), configuration.isSecure(), URI_ADDRESS_MAPPER);
+
 //            this.websocketClientSpec = configuration.websocketClientSpec;
 //            this.shouldRetry = !configuration.retryDisabled;
 //            this.handler = configuration.body;
