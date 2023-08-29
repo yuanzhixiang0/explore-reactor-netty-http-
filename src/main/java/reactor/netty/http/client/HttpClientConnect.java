@@ -112,8 +112,7 @@ class HttpClientConnect extends HttpClient {
         if (config.deferredConf != null) {
             return config.deferredConf.apply(Mono.just(config))
                     .flatMap(MonoHttpConnect::new);
-        }
-        else {
+        } else {
             mono = new MonoHttpConnect(config);
         }
 
@@ -206,72 +205,69 @@ class HttpClientConnect extends HttpClient {
         @Override
         @SuppressWarnings("deprecation")
         public void subscribe(CoreSubscriber<? super Connection> actual) {
-//            HttpClientHandler handler = new HttpClientHandler(config);
-//
-//            Mono.<Connection>create(sink -> {
-//                        HttpClientConfig _config = config;
-//
-//                        //append secure handler if needed
-//                        if (handler.toURI.isSecure()) {
-//                            if (_config.sslProvider == null) {
-//                                _config = new HttpClientConfig(config);
-//                                if (_config.checkProtocol(HttpClientConfig.h2c) && _config.protocols.length > 1) {
-//                                    removeIncompatibleProtocol(_config, HttpProtocol.H2C);
-//                                }
-//                                _config.sslProvider = HttpClientSecure.defaultSslProvider(_config);
-//                            }
-//
-//                            if (_config.checkProtocol(HttpClientConfig.h2c)) {
-//                                sink.error(new IllegalArgumentException(
-//                                        "Configured H2 Clear-Text protocol with TLS. " +
-//                                                "Use the non Clear-Text H2 protocol via HttpClient#protocol or disable TLS " +
-//                                                "via HttpClient#noSSL()"));
-//                                return;
-//                            }
-//
-//                            if (_config.sslProvider.getDefaultConfigurationType() == null) {
-//                                if (_config.checkProtocol(HttpClientConfig.h2)) {
-//                                    _config.sslProvider = SslProvider.updateDefaultConfiguration(_config.sslProvider,
-//                                            SslProvider.DefaultConfigurationType.H2);
-//                                }
-//                                else {
-//                                    _config.sslProvider = SslProvider.updateDefaultConfiguration(_config.sslProvider,
-//                                            SslProvider.DefaultConfigurationType.TCP);
-//                                }
-//                            }
-//                        }
-//                        else {
-//                            if (_config.sslProvider != null) {
-//                                _config = new HttpClientConfig(config);
-//                                if (_config.checkProtocol(HttpClientConfig.h2) && _config.protocols.length > 1) {
-//                                    removeIncompatibleProtocol(_config, HttpProtocol.H2);
-//                                }
-//                                _config.sslProvider = null;
-//                            }
-//
-//                            if (_config.checkProtocol(HttpClientConfig.h2)) {
-//                                sink.error(new IllegalArgumentException(
-//                                        "Configured H2 protocol without TLS. Use H2 Clear-Text " +
-//                                                "protocol via HttpClient#protocol or configure TLS via HttpClient#secure"));
-//                                return;
-//                            }
-//                        }
-//
-//                        ConnectionObserver observer =
-//                                new HttpObserver(sink, handler)
-//                                        .then(_config.defaultConnectionObserver())
-//                                        .then(_config.connectionObserver())
-//                                        .then(new HttpIOHandlerObserver(sink, handler));
-//
-//                        AddressResolverGroup<?> resolver = _config.resolverInternal();
-//
-//                        _config.httpConnectionProvider()
-//                                .acquire(_config, observer, handler, resolver)
-//                                .subscribe(new ClientTransportSubscriber(sink));
-//
-//                    }).retryWhen(Retry.indefinitely().filter(handler))
-//                    .subscribe(actual);
-            throw new Error();
+            HttpClientHandler handler = new HttpClientHandler(config);
+
+            Mono.<Connection>create(sink -> {
+                        HttpClientConfig _config = config;
+
+                        //append secure handler if needed
+                        if (handler.toURI.isSecure()) {
+                            if (_config.sslProvider == null) {
+                                _config = new HttpClientConfig(config);
+                                if (_config.checkProtocol(HttpClientConfig.h2c) && _config.protocols.length > 1) {
+                                    removeIncompatibleProtocol(_config, HttpProtocol.H2C);
+                                }
+                                _config.sslProvider = HttpClientSecure.defaultSslProvider(_config);
+                            }
+
+                            if (_config.checkProtocol(HttpClientConfig.h2c)) {
+                                sink.error(new IllegalArgumentException(
+                                        "Configured H2 Clear-Text protocol with TLS. " +
+                                                "Use the non Clear-Text H2 protocol via HttpClient#protocol or disable TLS " +
+                                                "via HttpClient#noSSL()"));
+                                return;
+                            }
+
+                            if (_config.sslProvider.getDefaultConfigurationType() == null) {
+                                if (_config.checkProtocol(HttpClientConfig.h2)) {
+                                    _config.sslProvider = SslProvider.updateDefaultConfiguration(_config.sslProvider,
+                                            SslProvider.DefaultConfigurationType.H2);
+                                } else {
+                                    _config.sslProvider = SslProvider.updateDefaultConfiguration(_config.sslProvider,
+                                            SslProvider.DefaultConfigurationType.TCP);
+                                }
+                            }
+                        } else {
+                            if (_config.sslProvider != null) {
+                                _config = new HttpClientConfig(config);
+                                if (_config.checkProtocol(HttpClientConfig.h2) && _config.protocols.length > 1) {
+                                    removeIncompatibleProtocol(_config, HttpProtocol.H2);
+                                }
+                                _config.sslProvider = null;
+                            }
+
+                            if (_config.checkProtocol(HttpClientConfig.h2)) {
+                                sink.error(new IllegalArgumentException(
+                                        "Configured H2 protocol without TLS. Use H2 Clear-Text " +
+                                                "protocol via HttpClient#protocol or configure TLS via HttpClient#secure"));
+                                return;
+                            }
+                        }
+
+                        ConnectionObserver observer =
+                                new HttpObserver(sink, handler)
+                                        .then(_config.defaultConnectionObserver())
+                                        .then(_config.connectionObserver())
+                                        .then(new HttpIOHandlerObserver(sink, handler));
+
+                        AddressResolverGroup<?> resolver = _config.resolverInternal();
+
+                        _config.httpConnectionProvider()
+                                .acquire(_config, observer, handler, resolver)
+                                .subscribe(new ClientTransportSubscriber(sink));
+
+                    }).retryWhen(Retry.indefinitely().filter(handler))
+                    .subscribe(actual);
         }
 
         private void removeIncompatibleProtocol(HttpClientConfig config, HttpProtocol protocol) {
@@ -348,8 +344,7 @@ class HttpClientConnect extends HttpClient {
                 if (ops != null && handler.redirectRequestBiConsumer != null) {
                     handler.previousRequestHeaders = ops.requestHeaders;
                 }
-            }
-            else if (handler.shouldRetry && AbortedException.isConnectionReset(error)) {
+            } else if (handler.shouldRetry && AbortedException.isConnectionReset(error)) {
                 HttpClientOperations ops = connection.as(HttpClientOperations.class);
                 if (ops != null && ops.hasSentHeaders()) {
                     // In some cases the channel close event may be delayed and thus the connection to be
@@ -367,8 +362,7 @@ class HttpClientConnect extends HttpClient {
                                 "The connection observed an error, the request cannot be " +
                                         "retried as the headers/body were sent"), error);
                     }
-                }
-                else {
+                } else {
                     if (ops != null) {
                         // In some cases the channel close event may be delayed and thus the connection to be
                         // returned to the pool and later the eviction functionality to remove it from the pool.
@@ -385,8 +379,7 @@ class HttpClientConnect extends HttpClient {
                                 "The connection observed an error, the request will be retried"), error);
                     }
                 }
-            }
-            else if (error instanceof SslClosedEngineException) {
+            } else if (error instanceof SslClosedEngineException) {
                 if (log.isWarnEnabled()) {
                     log.warn(format(connection.channel(), "The connection observed an error"), error);
                 }
@@ -395,8 +388,7 @@ class HttpClientConnect extends HttpClient {
                     // javax.net.ssl.SSLEngine has been closed, do not return the connection to the pool
                     ops.markPersistent(false);
                 }
-            }
-            else if (log.isWarnEnabled()) {
+            } else if (log.isWarnEnabled()) {
                 log.warn(format(connection.channel(), "The connection observed an error"), error);
             }
             sink.error(error);
@@ -450,13 +442,13 @@ class HttpClientConnect extends HttpClient {
     static final class HttpClientHandler extends SocketAddress
             implements Predicate<Throwable>, Supplier<SocketAddress> {
 
-        volatile HttpMethod           method;
-        final HttpHeaders             defaultHeaders;
+        volatile HttpMethod method;
+        final HttpHeaders defaultHeaders;
         final BiFunction<? super HttpClientRequest, ? super NettyOutbound, ? extends Publisher<Void>>
                 handler;
-        final boolean                 compress;
-        final UriEndpointFactory      uriEndpointFactory;
-        final WebsocketClientSpec     websocketClientSpec;
+        final boolean compress;
+        final UriEndpointFactory uriEndpointFactory;
+        final WebsocketClientSpec websocketClientSpec;
         final BiPredicate<HttpClientRequest, HttpClientResponse>
                 followRedirectPredicate;
         final BiConsumer<HttpHeaders, HttpClientRequest>
@@ -464,15 +456,15 @@ class HttpClientConnect extends HttpClient {
         final Consumer<HttpClientRequest>
                 redirectRequestConsumer;
         final HttpResponseDecoderSpec decoder;
-        final ProxyProvider           proxyProvider;
-        final Duration                responseTimeout;
+        final ProxyProvider proxyProvider;
+        final Duration responseTimeout;
 
-        volatile UriEndpoint        toURI;
-        volatile String             resourceUrl;
-        volatile UriEndpoint        fromURI;
+        volatile UriEndpoint toURI;
+        volatile String resourceUrl;
+        volatile UriEndpoint fromURI;
         volatile Supplier<String>[] redirectedFrom;
-        volatile boolean            shouldRetry;
-        volatile HttpHeaders        previousRequestHeaders;
+        volatile boolean shouldRetry;
+        volatile HttpHeaders previousRequestHeaders;
 
         HttpClientHandler(HttpClientConfig configuration) {
 //            this.method = configuration.method;
@@ -620,8 +612,7 @@ class HttpClientConnect extends HttpClient {
                     host = host + ':' + port;
                 }
                 return host;
-            }
-            else {
+            } else {
                 return "localhost";
             }
         }
