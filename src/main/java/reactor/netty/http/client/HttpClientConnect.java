@@ -482,40 +482,37 @@ class HttpClientConnect extends HttpClient {
             this.uriEndpointFactory =
                     new UriEndpointFactory(configuration.remoteAddress(), configuration.isSecure(), URI_ADDRESS_MAPPER);
 
-//            this.websocketClientSpec = configuration.websocketClientSpec;
-//            this.shouldRetry = !configuration.retryDisabled;
-//            this.handler = configuration.body;
-//
-//            if (configuration.uri == null) {
-//                String uri = configuration.uriStr;
-//
-//                uri = uri == null ? "/" : uri;
-//
-//                if (baseUrl != null && uri.startsWith("/")) {
-//                    if (baseUrl.endsWith("/")) {
-//                        baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
-//                    }
-//                    uri = baseUrl + uri;
-//                }
-//
-//                this.toURI = uriEndpointFactory.createUriEndpoint(uri, configuration.websocketClientSpec != null);
-//            }
-//            else {
-//                this.toURI = uriEndpointFactory.createUriEndpoint(configuration.uri, configuration.websocketClientSpec != null);
-//            }
-//            this.resourceUrl = toURI.toExternalForm();
-            throw new Error();
+            this.websocketClientSpec = configuration.websocketClientSpec;
+            this.shouldRetry = !configuration.retryDisabled;
+            this.handler = configuration.body;
+
+            if (configuration.uri == null) {
+                String uri = configuration.uriStr;
+
+                uri = uri == null ? "/" : uri;
+
+                if (baseUrl != null && uri.startsWith("/")) {
+                    if (baseUrl.endsWith("/")) {
+                        baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+                    }
+                    uri = baseUrl + uri;
+                }
+
+                this.toURI = uriEndpointFactory.createUriEndpoint(uri, configuration.websocketClientSpec != null);
+            } else {
+                this.toURI = uriEndpointFactory.createUriEndpoint(configuration.uri, configuration.websocketClientSpec != null);
+            }
+            this.resourceUrl = toURI.toExternalForm();
         }
 
         @Override
         public SocketAddress get() {
-//            SocketAddress address = toURI.getRemoteAddress();
-//            if (proxyProvider != null && !proxyProvider.shouldProxy(address) && address instanceof InetSocketAddress) {
-//                address = AddressUtils.replaceWithResolved((InetSocketAddress) address);
-//            }
-//
-//            return address;
-            throw new Error();
+            SocketAddress address = toURI.getRemoteAddress();
+            if (proxyProvider != null && !proxyProvider.shouldProxy(address) && address instanceof InetSocketAddress) {
+                address = AddressUtils.replaceWithResolved((InetSocketAddress) address);
+            }
+
+            return address;
         }
 
         Publisher<Void> requestWithBody(HttpClientOperations ch) {
@@ -618,50 +615,46 @@ class HttpClientConnect extends HttpClient {
         }
 
         void redirect(String to) {
-//            Supplier<String>[] redirectedFrom = this.redirectedFrom;
-//            UriEndpoint toURITemp;
-//            UriEndpoint from = toURI;
-//            SocketAddress address = from.getRemoteAddress();
-//            if (address instanceof InetSocketAddress) {
-//                try {
-//                    URI redirectUri = new URI(to);
-//                    if (!redirectUri.isAbsolute()) {
-//                        URI requestUri = new URI(resourceUrl);
-//                        redirectUri = requestUri.resolve(redirectUri);
-//                    }
-//                    toURITemp = uriEndpointFactory.createUriEndpoint(redirectUri, from.isWs());
-//                }
-//                catch (URISyntaxException e) {
-//                    throw new IllegalArgumentException("Cannot resolve location header", e);
-//                }
-//            }
-//            else {
-//                toURITemp = uriEndpointFactory.createUriEndpoint(from, to, () -> address);
-//            }
-//            fromURI = from;
-//            toURI = toURITemp;
-//            resourceUrl = toURITemp.toExternalForm();
-//            this.redirectedFrom = addToRedirectedFromArray(redirectedFrom, from);
-            throw new Error();
+            Supplier<String>[] redirectedFrom = this.redirectedFrom;
+            UriEndpoint toURITemp;
+            UriEndpoint from = toURI;
+            SocketAddress address = from.getRemoteAddress();
+            if (address instanceof InetSocketAddress) {
+                try {
+                    URI redirectUri = new URI(to);
+                    if (!redirectUri.isAbsolute()) {
+                        URI requestUri = new URI(resourceUrl);
+                        redirectUri = requestUri.resolve(redirectUri);
+                    }
+                    toURITemp = uriEndpointFactory.createUriEndpoint(redirectUri, from.isWs());
+                } catch (URISyntaxException e) {
+                    throw new IllegalArgumentException("Cannot resolve location header", e);
+                }
+            } else {
+                toURITemp = uriEndpointFactory.createUriEndpoint(from, to, () -> address);
+            }
+            fromURI = from;
+            toURI = toURITemp;
+            resourceUrl = toURITemp.toExternalForm();
+            this.redirectedFrom = addToRedirectedFromArray(redirectedFrom, from);
         }
 
         @SuppressWarnings({"unchecked", "rawtypes"})
         static Supplier<String>[] addToRedirectedFromArray(@Nullable Supplier<String>[] redirectedFrom, UriEndpoint from) {
-//            Supplier<String> fromUrlSupplier = from::toExternalForm;
-//            if (redirectedFrom == null) {
-//                return new Supplier[]{fromUrlSupplier};
-//            }
-//            else {
-//                Supplier<String>[] newRedirectedFrom = new Supplier[redirectedFrom.length + 1];
-//                System.arraycopy(redirectedFrom,
-//                        0,
-//                        newRedirectedFrom,
-//                        0,
-//                        redirectedFrom.length);
-//                newRedirectedFrom[redirectedFrom.length] = fromUrlSupplier;
-//                return newRedirectedFrom;
-//            }
-            throw new Error();
+            Supplier<String> fromUrlSupplier = from::toExternalForm;
+            if (redirectedFrom == null) {
+                return new Supplier[]{fromUrlSupplier};
+            }
+            else {
+                Supplier<String>[] newRedirectedFrom = new Supplier[redirectedFrom.length + 1];
+                System.arraycopy(redirectedFrom,
+                        0,
+                        newRedirectedFrom,
+                        0,
+                        redirectedFrom.length);
+                newRedirectedFrom[redirectedFrom.length] = fromUrlSupplier;
+                return newRedirectedFrom;
+            }
         }
 
         void channel(HttpClientOperations ops) {
@@ -673,21 +666,20 @@ class HttpClientConnect extends HttpClient {
 
         @Override
         public boolean test(Throwable throwable) {
-//            if (throwable instanceof RedirectClientException) {
-//                RedirectClientException re = (RedirectClientException) throwable;
-//                if (HttpResponseStatus.SEE_OTHER.equals(re.status)) {
-//                    method = HttpMethod.GET;
-//                }
-//                redirect(re.location);
-//                return true;
-//            }
-//            if (shouldRetry && AbortedException.isConnectionReset(throwable)) {
-//                shouldRetry = false;
-//                redirect(toURI.toString());
-//                return true;
-//            }
-//            return false;
-            throw new Error();
+            if (throwable instanceof RedirectClientException) {
+                RedirectClientException re = (RedirectClientException) throwable;
+                if (HttpResponseStatus.SEE_OTHER.equals(re.status)) {
+                    method = HttpMethod.GET;
+                }
+                redirect(re.location);
+                return true;
+            }
+            if (shouldRetry && AbortedException.isConnectionReset(throwable)) {
+                shouldRetry = false;
+                redirect(toURI.toString());
+                return true;
+            }
+            return false;
         }
 
         @Override

@@ -2,6 +2,7 @@ package org.example;
 
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Hooks;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.resources.ConnectionProvider;
 
@@ -12,6 +13,8 @@ import java.util.concurrent.TimeUnit;
 public class Main {
 
     public static void main(String[] args) throws InterruptedException {
+
+//        Hooks.onOperatorDebug();
 
         HttpClient httpClient = HttpClient
                 .create(ConnectionProvider.builder("pushv5-webClient")
