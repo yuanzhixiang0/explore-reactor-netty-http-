@@ -85,7 +85,6 @@ final class HttpClientFinalizer extends HttpClientConnect implements HttpClient.
                 .flatMapMany(new Function<HttpClientOperations, Publisher<? extends V>>() {
                     @Override
                     public Publisher<? extends V> apply(HttpClientOperations httpClientOperations) {
-                        System.out.println("test");
                         return Flux
                                 .from(receiver.apply(httpClientOperations, httpClientOperations))
                                 .contextWrite(httpClientOperations.currentContextView());

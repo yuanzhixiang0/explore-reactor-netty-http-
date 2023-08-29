@@ -180,8 +180,13 @@ class HttpClientOperations extends HttpOperations<NettyInbound, NettyOutbound>
 
     @Override
     public HttpHeaders responseHeaders() {
-        throw new Error();
+        ResponseState responseState = this.responseState;
+        if (responseState != null) {
+            return responseState.headers;
+        }
+        throw new IllegalStateException("Response headers cannot be accessed without " + "server response");
     }
+
 
     @Override
     public HttpResponseStatus status() {
