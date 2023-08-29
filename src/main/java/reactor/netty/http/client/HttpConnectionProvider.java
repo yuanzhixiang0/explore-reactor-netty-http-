@@ -45,7 +45,8 @@ final class HttpConnectionProvider implements ConnectionProvider {
             @Nullable Supplier<? extends SocketAddress> remoteAddress,
             @Nullable AddressResolverGroup<?> resolverGroup) {
         if (((HttpClientConfig) config)._protocols == HttpClientConfig.h11) {
-            return http1ConnectionProvider().acquire(config, connectionObserver, remoteAddress, resolverGroup);
+            Mono<? extends Connection> acquire = http1ConnectionProvider().acquire(config, connectionObserver, remoteAddress, resolverGroup);
+            return acquire;
         } else if (http1ConnectionProvider == null) {
 //            return HttpResources.get().getOrCreateHttp2ConnectionProvider(HTTP2_CONNECTION_PROVIDER_FACTORY)
 //                    .acquire(config, connectionObserver, remoteAddress, resolverGroup);

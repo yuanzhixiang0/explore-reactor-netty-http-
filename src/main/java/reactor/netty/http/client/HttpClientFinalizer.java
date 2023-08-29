@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Configures the HTTP request before calling one of the terminal,
@@ -80,8 +81,16 @@ final class HttpClientFinalizer extends HttpClientConnect implements HttpClient.
 
     @Override
     public <V> Flux<V> responseConnection(BiFunction<? super HttpClientResponse, ? super Connection, ? extends Publisher<V>> receiver) {
-        return _connect().flatMapMany(resp -> Flux.from(receiver.apply(resp, resp))
-                .contextWrite(resp.currentContextView()));
+        return _connect()
+                .flatMapMany(new Function<HttpClientOperations, Publisher<? extends V>>() {
+                    @Override
+                    public Publisher<? extends V> apply(HttpClientOperations httpClientOperations) {
+                        System.out.println("test");
+                        return Flux
+                                .from(receiver.apply(httpClientOperations, httpClientOperations))
+                                .contextWrite(httpClientOperations.currentContextView());
+                    }
+                });
     }
 
     @Override

@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 import reactor.netty.Connection;
 import reactor.netty.NettyOutbound;
 import reactor.netty.channel.ChannelMetricsRecorder;
+import reactor.netty.channel.ChannelOperations;
 import reactor.netty.http.Http2SettingsSpec;
 import reactor.netty.http.HttpProtocol;
 import reactor.netty.http.HttpResources;
@@ -138,6 +139,12 @@ public final class HttpClientConfig extends ClientTransportConfig<HttpClientConf
     public AddressResolverGroup<?> defaultAddressResolverGroup() {
         return HttpResources.get().getOrCreateDefaultResolver();
     }
+
+    @Override
+    public ChannelOperations.OnSetup channelOperationsProvider() {
+        return (ch, c, msg) -> new HttpClientOperations(ch, c, cookieEncoder, cookieDecoder, httpMessageLogFactory);
+    }
+
     @Override
     protected LoggingHandler defaultLoggingHandler() {
         throw new Error();
